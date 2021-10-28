@@ -1,0 +1,56 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+exclude = '''
+^/(
+    | \.git
+    | \.venv
+    | build
+    | dist
+)/
+'''
+include = '\.pyi?$'
+include-trailing-comma = false
+line-length = 79
+target-version = ['py38']
+
+[tool.isort]
+force_single_line = "true"
+profile = "black"
+src_paths = [""]
+
+[tool.poetry]
+authors = [
+    "A. J. Wray <ajw@ajw.sl>",
+]
+classifiers = [
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3 :: Only',
+]
+description = ""
+homepage = "https://github.com/timzaz/"
+keywords = [
+]
+license = "private"
+name = ""
+readme = "README.md"
+repository = "https://github.com/timzaz/"
+version = "1.0.0"
+
+[tool.poetry.dependencies]
+
+[tool.poetry.dev-dependencies]
+autoflake = "^1.4"
+black = {version = "^20.8b1", allow-prereleases = true}
+flake8 = "^3.8.4"
+ipython = "^7.19.0"
+isort = "5.8.0"
+pytest = "^6.2.2"
+Sphinx = "3.5.3"

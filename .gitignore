@@ -1,0 +1,63 @@
+# Virtualenv
+.python-env/
+.Python
+ENV
+*.env
+include
+
+# Python Packages
+*.egg
+*.egg-info
+.eggs/
+.installed.cfg
+bin
+build
+develop-eggs
+dist
+env
+parts
+sdist
+var
+
+docs/.build
+docs/_build
+
+# Pip Installer Log
+pip-log.txt
+
+# Unit test / coverage
+.coverage
+.pytest*
+coverage
+
+# Mac OS X
+.DS_Store
+._.DS_Store
+._countries.geojson
+*.plist
+
+# Generated files
+*.[oa]
+*.py[co]
+*.rbc
+*.sock
+*.next
+*.env.local
+.venv
+.vscode/
+
+# Temporary Files
+*.py~
+.*.sw*
+tmp/api/
+temp
+
+# Runtime data
+
+# *.json
+*.lock
+*.pid
+*.seed
+*.pid.lock
+node_modules
+pids
