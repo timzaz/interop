@@ -1,5 +1,6 @@
-import dotenv
 import os
+
+import dotenv
 
 try:
     #: Set the environment variables
@@ -19,7 +20,6 @@ finally:
     import signal
     import sys
     import typing
-
     from uuid import uuid4
 
     from interop import Exchanges
@@ -32,25 +32,15 @@ finally:
 
 @interop_ready.connect
 def register(sender: Interop):
-    """Register subscriber consumers and crunchers.
-
-    """
+    """Register subscriber consumers and crunchers."""
 
     sender.add_handler("#", Exchanges.NOTIFY.value, make_handler("All"))
     sender.add_handler(
-        "ERROR.#",
-        Exchanges.NOTIFY.value,
-        make_handler("Error")
+        "ERROR.#", Exchanges.NOTIFY.value, make_handler("Error")
     )
+    sender.add_handler("INFO.#", Exchanges.NOTIFY.value, make_handler("Info"))
     sender.add_handler(
-        "INFO.#",
-        Exchanges.NOTIFY.value,
-        make_handler("Info")
-    )
-    sender.add_handler(
-        "WARNING.#",
-        Exchanges.NOTIFY.value,
-        make_handler("Warning")
+        "WARNING.#", Exchanges.NOTIFY.value, make_handler("Warning")
     )
     sender.add_cruncher(emitter_info)
     sender.add_cruncher(emitter_error)
@@ -60,12 +50,9 @@ def register(sender: Interop):
 async def emitter_info(app):
     while True:
         now(
-            {
-                "message": "Some generic info message",
-                "sync": uuid4().hex
-            },
+            {"message": "Some generic info message", "sync": uuid4().hex},
             Exchanges.NOTIFY.value,
-            "INFO.message"
+            "INFO.message",
         )
 
         await asyncio.sleep(2)
@@ -74,12 +61,9 @@ async def emitter_info(app):
 async def emitter_error(app):
     while True:
         now(
-            {
-                "message": "Some generic error message",
-                "sync": uuid4().hex
-            },
+            {"message": "Some generic error message", "sync": uuid4().hex},
             Exchanges.NOTIFY.value,
-            "ERROR.message"
+            "ERROR.message",
         )
 
         await asyncio.sleep(2)
@@ -89,12 +73,9 @@ async def emitter_warn(app):
 
     while True:
         now(
-            {
-                "message": "Some generic warning message",
-                "sync": uuid4().hex
-            },
+            {"message": "Some generic warning message", "sync": uuid4().hex},
             Exchanges.NOTIFY.value,
-            "WARNING.message"
+            "WARNING.message",
         )
 
         await asyncio.sleep(2)
@@ -103,14 +84,12 @@ async def emitter_warn(app):
 def make_handler(name: str):
     async def print_log(packet: Packet):
         log_record_message = typing.cast(
-            typing.Dict[str, typing.Any],
-            packet.data
-        )['message']
+            typing.Dict[str, typing.Any], packet.data
+        )["message"]
 
         log_record_sync = typing.cast(
-            typing.Dict[str, typing.Any],
-            packet.data
-        )['sync']
+            typing.Dict[str, typing.Any], packet.data
+        )["sync"]
 
         print(
             f"{name} handled: {packet.exchange} ({packet.routing_key})"
@@ -137,8 +116,8 @@ async def main():
             defaults={
                 "DEBUG": True,
                 "IMPORT_NAME": "examples.simple",
-                "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI")
-            }
+                "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI"),
+            },
         )
     )
 

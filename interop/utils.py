@@ -69,10 +69,7 @@ class Config(dict):
     """
 
     def __init__(
-        self,
-        *,
-        root_path: str,
-        defaults: typing.Dict[str, typing.Any] = None
+        self, *, root_path: str, defaults: typing.Dict[str, typing.Any] = None
     ):
         dict.__init__(self, defaults or {})
         self.root_path = root_path
@@ -82,11 +79,9 @@ class Config(dict):
         *,
         default: typing.Any = None,
         func: typing.Callable = None,
-        key: str
+        key: str,
     ) -> typing.Any:
-        """Casts the value of config's key with func if specified.
-
-        """
+        """Casts the value of config's key with func if specified."""
 
         if key in self:
             value = self[key]
@@ -106,7 +101,7 @@ class Config(dict):
                 "no": False,
                 "true": True,
                 "y": True,
-                "yes": True
+                "yes": True,
             }
 
             value = value.lower()
@@ -124,12 +119,7 @@ class Config(dict):
                 f"Not a valid {func.__name__}."
             )
 
-    def from_envvar(
-        self,
-        *,
-        silent: bool = False,
-        variable_name: str
-    ) -> bool:
+    def from_envvar(self, *, silent: bool = False, variable_name: str) -> bool:
         """Loads a configuration from an environment variable pointing to
         a configuration file.  This is basically just a shortcut with nicer
         error messages for this line of code::
@@ -154,11 +144,7 @@ class Config(dict):
         return self.from_pyfile(filename=rv, silent=silent)
 
     def from_file(
-        self,
-        *,
-        filename: str,
-        load: typing.Callable,
-        silent: bool = False
+        self, *, filename: str, load: typing.Callable, silent: bool = False
     ) -> bool:
         """Update the values in the config from a file that is loaded
         using the ``load`` parameter. The loaded data is passed to the
@@ -197,7 +183,7 @@ class Config(dict):
         *,
         namespace: str,
         lowercase: bool = True,
-        trim_namespace: bool = True
+        trim_namespace: bool = True,
     ) -> typing.Dict[str, typing.Any]:
         """Returns a dictionary containing a subset of configuration options
         that match the specified namespace/prefix. Example usage::
@@ -279,13 +265,10 @@ class Config(dict):
             with open(filename, mode="rb") as config_file:
                 exec(compile(config_file.read(), filename, "exec"), d.__dict__)
         except OSError as e:
-            if (
-                silent and
-                e.errno in (
-                    errno.ENOENT,
-                    errno.EISDIR,
-                    errno.ENOTDIR
-                )
+            if silent and e.errno in (
+                errno.ENOENT,
+                errno.EISDIR,
+                errno.ENOTDIR,
             ):
                 return False
             e.strerror = f"Unable to load configuration file ({e.strerror})"
@@ -540,7 +523,7 @@ def import_string(import_name, silent=False):
             reraise(
                 ImportStringError,
                 ImportStringError(import_name, e),
-                sys.exc_info()[2]
+                sys.exc_info()[2],
             )
 
 

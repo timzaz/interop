@@ -11,7 +11,6 @@ import re
 import socket
 import threading
 import typing
-
 from asyncio import Event
 from asyncio import PriorityQueue
 from asyncio import create_task
@@ -24,7 +23,6 @@ from .publisher import Publisher
 from .signals import interop_ready
 from .subscriber import Subscriber
 from .utils import Config
-
 from .utils import Exchanges
 from .utils import ExchangeTypes
 from .utils import Packet
