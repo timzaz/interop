@@ -322,7 +322,6 @@ class Interop:
                 "Handler function mapping is overwriting an "
                 f"existing handler function: {endpoint}"
             )
-            return
         #: The handler that would run would be the one for the endpoint
         #: whose regex matches first for the exchange - supplied in Packet
         self._subscriber_handlers[endpoint] = handler
