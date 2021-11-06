@@ -20,11 +20,11 @@ from asyncio import iscoroutinefunction
 from functools import cached_property
 from functools import wraps
 
-from server.lib.utils import Config
-
 from .publisher import Publisher
 from .signals import interop_ready
 from .subscriber import Subscriber
+from .utils import Config
+
 from .utils import Exchanges
 from .utils import ExchangeTypes
 from .utils import Packet

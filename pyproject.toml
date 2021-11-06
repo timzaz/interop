@@ -14,41 +14,47 @@ exclude = '''
 include = '\.pyi?$'
 include-trailing-comma = false
 line-length = 79
-target-version = ['py38']
+target-version = ["py38"]
 
 [tool.isort]
 force_single_line = "true"
 profile = "black"
-src_paths = [""]
+src_paths = ["interop"]
 
 [tool.poetry]
 authors = [
     "A. J. Wray <ajw@ajw.sl>",
 ]
 classifiers = [
-    'Operating System :: OS Independent',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3 :: Only',
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3 :: Only",
 ]
-description = ""
+description = "interop"
 homepage = "https://github.com/timzaz/"
 keywords = [
+    "publisher",
+    "rabbitmq",
+    "subscriber"
 ]
 license = "private"
-name = ""
+name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/"
 version = "1.0.0"
 
 [tool.poetry.dependencies]
+python = "^3.9"
+pika = "^1.2.0"
+black = {version = "^21.10b0", allow-prereleases = true}
+blinker = "^1.4"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
-black = {version = "^20.8b1", allow-prereleases = true}
 flake8 = "^3.8.4"
 ipython = "^7.19.0"
 isort = "5.8.0"

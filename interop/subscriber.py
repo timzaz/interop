@@ -17,8 +17,7 @@ import pika
 from pika.adapters.asyncio_connection import AsyncioConnection
 from pika.channel import Channel
 
-from server.lib.utils import Config
-
+from .utils import Config
 from .utils import Packet
 from .utils import reply
 
