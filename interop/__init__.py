@@ -22,7 +22,6 @@ from functools import wraps
 from .publisher import Publisher
 from .signals import interop_ready
 from .subscriber import Subscriber
-from .utils import Config
 from .utils import Exchanges
 from .utils import ExchangeTypes
 from .utils import Packet
@@ -50,16 +49,13 @@ __all__ = (
     "Interop",
 )
 
-default_config: Config = Config(
-    root_path=__package__,
-    defaults={
-        "IMPORT_NAME": __name__,
-        "RMQ_BROKER_URI": (
-            "amqp://guest:guest@localhost:5672/%2F?"
-            "connection_attempts=3&heartbeat=3600"
-        ),
-    },
-)
+default_config: typing.Dict[str, typing.Any] = {
+    "IMPORT_NAME": __name__,
+    "RMQ_BROKER_URI": (
+        "amqp://guest:guest@localhost:5672/%2F?"
+        "connection_attempts=3&heartbeat=3600"
+    ),
+}
 
 default_exchanges: typing.List[typing.Tuple[str, str]] = [
     (
@@ -159,7 +155,7 @@ class Interop:
 
         self._connected: bool = False
         self._crunchers: typing.Set[
-            typing.Callable[[Config], typing.Coroutine]
+            typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
         ] = set()
 
         self._publisher_started = Event()
@@ -237,7 +233,10 @@ class Interop:
             self.futures.append(create_task(f(self.app)))
 
     @before_connect
-    def add_cruncher(self, f: typing.Callable[[Config], typing.Coroutine]):
+    def add_cruncher(
+        self,
+        f: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
+    ):
         """A callable that accepts 1 parameter that is run in COG mode as the
         primary function.
 
@@ -324,7 +323,12 @@ class Interop:
         #: whose regex matches first for the exchange - supplied in Packet
         self._subscriber_handlers[endpoint] = handler
 
-    async def init_app(self, app: Config = default_config):
+    async def init_app(
+        self,
+        *,
+        root_path: str,
+        app: typing.Dict[str, typing.Any] = default_config
+    ):
         """Initialise."""
 
         self.broker_uri = app.get("RMQ_BROKER_URI")
@@ -333,7 +337,7 @@ class Interop:
         ), "RMQ_BROKER_URI must not be None."
 
         self.name = app.get("IMPORT_NAME", self.name)  # type: ignore
-        self.root_path = app.root_path
+        self.root_path = root_path
 
         self.app = app
 

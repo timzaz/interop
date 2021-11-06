@@ -26,7 +26,6 @@ finally:
     from interop import Interop
     from interop import Packet
     from interop import interop_ready
-    from interop.utils import Config
     from interop.utils import now
 
 
@@ -111,14 +110,12 @@ def signint_handler(p0, p1):
 
 async def main():
     await the_interop.init_app(
-        Config(
-            root_path=os.getcwd(),
-            defaults={
-                "DEBUG": True,
-                "IMPORT_NAME": "examples.simple",
-                "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI"),
-            },
-        )
+        root_path=os.getcwd(),
+        app={
+            "DEBUG": True,
+            "IMPORT_NAME": "examples.simple",
+            "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI"),
+        }
     )
 
     await the_interop()

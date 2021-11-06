@@ -17,7 +17,6 @@ import pika
 from pika.adapters.asyncio_connection import AsyncioConnection
 from pika.channel import Channel
 
-from .utils import Config
 from .utils import Packet
 from .utils import reply
 
@@ -438,7 +437,7 @@ class Subscriber:
         logger: Logger,
         event: Event,
         handlers: typing.Dict[typing.Any, typing.Callable[..., typing.Any]],
-        app: Config,
+        app: typing.Dict[str, typing.Any],
     ):
         """Run the simple consumer by connecting to RabbitMQ and then
         starting the IOLoop to block and allow the SelectConnection to operate.
