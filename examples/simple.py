@@ -33,48 +33,18 @@ finally:
 def register(sender: Interop):
     """Register subscriber consumers and crunchers."""
 
-    sender.add_handler("#", Exchanges.NOTIFY.value, make_handler("All"))
     sender.add_handler(
-        "ERROR.#", Exchanges.NOTIFY.value, make_handler("Error")
+        "simple.#", Exchanges.NOTIFY.value, make_handler("Logger")
     )
-    sender.add_handler("INFO.#", Exchanges.NOTIFY.value, make_handler("Info"))
-    sender.add_handler(
-        "WARNING.#", Exchanges.NOTIFY.value, make_handler("Warning")
-    )
-    sender.add_cruncher(emitter_info)
-    sender.add_cruncher(emitter_error)
-    sender.add_cruncher(emitter_warn)
+    sender.add_cruncher(emitter)
 
 
-async def emitter_info(app):
+async def emitter(app):
     while True:
         now(
             {"message": "Some generic info message", "sync": uuid4().hex},
             Exchanges.NOTIFY.value,
-            "INFO.message",
-        )
-
-        await asyncio.sleep(2)
-
-
-async def emitter_error(app):
-    while True:
-        now(
-            {"message": "Some generic error message", "sync": uuid4().hex},
-            Exchanges.NOTIFY.value,
-            "ERROR.message",
-        )
-
-        await asyncio.sleep(2)
-
-
-async def emitter_warn(app):
-
-    while True:
-        now(
-            {"message": "Some generic warning message", "sync": uuid4().hex},
-            Exchanges.NOTIFY.value,
-            "WARNING.message",
+            "simple.message",
         )
 
         await asyncio.sleep(2)
@@ -115,7 +85,7 @@ async def main():
             "DEBUG": True,
             "IMPORT_NAME": "examples.simple",
             "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI"),
-        }
+        },
     )
 
     await the_interop()
