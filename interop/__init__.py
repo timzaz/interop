@@ -235,7 +235,7 @@ class Interop:
     @before_connect
     def add_cruncher(
         self,
-        f: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
+        f: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine],
     ):
         """A callable that accepts 1 parameter that is run in COG mode as the
         primary function.
@@ -327,7 +327,7 @@ class Interop:
         self,
         *,
         root_path: str,
-        app: typing.Dict[str, typing.Any] = default_config
+        app: typing.Dict[str, typing.Any] = default_config,
     ):
         """Initialise."""
 
