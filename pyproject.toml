@@ -45,17 +45,17 @@ license = "private"
 name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/"
-version = "1.0.0"
+version = "0.1.0"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 pika = "^1.2.0"
-black = {version = "^21.10b0", allow-prereleases = true}
 python-dotenv = "^0.19.1"
 blinker-async = "^0.0.3"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
+black = {version = "^21.10b0", allow-prereleases = true}
 flake8 = "^3.8.4"
 ipython = "^7.19.0"
 isort = "5.8.0"
