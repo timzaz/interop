@@ -11,10 +11,11 @@ exclude = '''
     | dist
 )/
 '''
+experimental-string-processing = true
 include = '\.pyi?$'
 include-trailing-comma = false
 line-length = 79
-target-version = ["py38"]
+target-version = ['py310']
 
 [tool.isort]
 force_single_line = "true"
@@ -28,14 +29,11 @@ authors = [
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10.1",
     "Programming Language :: Python :: 3 :: Only",
 ]
-description = "interop"
-homepage = "https://github.com/timzaz/"
+description = "Asynchronous publish/subscribe client for RabbitMQ,"
+homepage = "https://github.com/timzaz/interop"
 keywords = [
     "publisher",
     "rabbitmq",
@@ -44,18 +42,18 @@ keywords = [
 license = "private"
 name = "interop"
 readme = "README.md"
-repository = "https://github.com/timzaz/"
-version = "0.1.0"
+repository = "https://github.com/timzaz/interop.git"
+version = "0.2.0"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10.1"
 pika = "^1.2.0"
 python-dotenv = "^0.19.1"
 blinker-async = "^0.0.3"
+black = {version = "^21.12b0", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
-black = {version = "^21.10b0", allow-prereleases = true}
 flake8 = "^3.8.4"
 ipython = "^7.19.0"
 isort = "5.8.0"
