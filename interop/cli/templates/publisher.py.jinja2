@@ -1,0 +1,17 @@
+import asyncio
+import typing
+
+from interop import publish
+
+
+@publish
+async def {{ name }}(app: typing.Dict[str, typing.Any]):
+    """This function monitors some external state and publishes directly to the
+    rabbitmq broker.
+
+    """
+
+    while True:
+        #: Add monitoring code here
+
+        await asyncio.sleep(2)  #: Use appropriate sleep time

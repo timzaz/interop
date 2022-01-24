@@ -1,0 +1,58 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+exclude = '''
+^/(
+    | \.git
+    | \.venv
+    | build
+    | dist
+)/
+'''
+experimental-string-processing = true
+include = '\.pyi?$'
+include-trailing-comma = false
+line-length = 79
+target-version = ['py310']
+
+[tool.isort]
+force_single_line = "true"
+profile = "black"
+src_paths = ["{{ import_name }}"]
+
+[tool.poetry]
+authors = [
+    "{{ author }} <{{ email }}>",
+]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10.1",
+    "Programming Language :: Python :: 3 :: Only",
+]
+description = "Asynchronous publish/subscribe client for RabbitMQ,"
+homepage = "https://github.com/"
+keywords = [
+    "interop",
+    "publisher",
+    "rabbitmq",
+    "subscriber",
+]
+license = "private"
+name = "{{ name }}"
+readme = "README.md"
+repository = "https://github.com/"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+python = "^3.10.1"
+interop = {git = "ssh://git@github.com/timzaz/interop.git", rev = "main"}
+
+[tool.poetry.dev-dependencies]
+autoflake = "^1.4"
+flake8 = "^3.8.4"
+ipython = "^7.19.0"
+isort = "5.8.0"
+pytest = "^6.2.2"

@@ -1,0 +1,41 @@
+.PHONY: default isvirtualenv
+
+default:
+	clear
+	@echo "Usage:"
+	@echo ""
+	@echo "    make format          Formats source files."
+	@echo "    make init            Initialises the application."
+	@echo "    make test            Runs pytest."
+	@echo ""
+	@echo ""
+
+isvirtualenv:
+	@if [ -z "$(VIRTUAL_ENV)" ]; \
+		then echo "ERROR: Not in a virtualenv." 1>&2; exit 1; fi
+
+format:
+	poetry run isort ./{{ import_name }} ./tests
+	autoflake \
+		--in-place \
+		--recursive \
+		--remove-all-unused-imports \
+		--remove-unused-variables \
+		./{{ import_name }} ./tests
+	poetry run black ./{{ import_name }} ./tests
+
+init:
+	cp .sample.env.local .env.local
+	poetry config experimental.new-installer true --local
+	poetry config installer.parallel true --local
+	poetry config virtualenvs.create true --local
+	poetry config virtualenvs.in-project true --local
+	poetry config virtualenvs.path .venv --local
+	poetry install
+	poetry install
+
+start:
+	python {{ import_name }}
+
+test: isvirtualenv
+	pytest tests

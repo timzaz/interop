@@ -1,0 +1,53 @@
+import asyncio
+import importlib
+import inspect
+import types
+import typing
+import os
+import signal
+import sys
+
+from {{ import_name }} import config
+from {{ import_name }} import interop
+
+
+def signint_handler(p0, p1):
+    interop.publisher.stop()
+    interop.subscriber.stop()
+
+    sys.exit(0)
+
+
+async def main():
+    await interop.init_app(app=config)
+    await interop()
+
+
+if __name__ == "__main__":
+
+    app_module: typing.Optional[types.ModuleType] = None
+    import_name: str = os.getenv("IMPORT_NAME", "")
+    try:
+        app_module = importlib.import_module(import_name)
+    except (ImportError, ValueError) as exc:  # noqa
+        pass
+
+    if app_module:
+        dir: str = os.path.join(
+            os.path.dirname(inspect.getfile(app_module)),
+            "{{ dir }}"
+        )
+
+        if os.path.isdir(dir):
+            for file in os.listdir(dir):
+                dirfile: str = os.path.join(dir, file)
+                if os.path.isfile(dirfile) and dirfile.endswith(".py"):
+                    try:
+                        importlib.import_module(
+                            f"{{ import_name }}.{{ dir }}.{file[:-3]}"
+                        )
+                    except:  # noqa
+                        pass
+
+    signal.signal(signal.SIGINT, signint_handler)
+    asyncio.run(main(), debug=True)
