@@ -1,8 +1,8 @@
 import os
-import typer
 import typing
-
 from enum import Enum
+
+import typer
 from jinja2 import Environment
 
 from .utils import get_templates_directory
@@ -29,9 +29,7 @@ class InitCli(typer.Typer):
     ):
 
         super().__init__(name=name, help=help, **kwargs)
-        self.callback(
-            invoke_without_command=True
-        )(self.init)
+        self.callback(invoke_without_command=True)(self.init)
 
         self.app_dir = os.getcwd()
 
@@ -41,7 +39,7 @@ class InitCli(typer.Typer):
         name: str = typer.Argument(
             ...,
             help="The name of the application.",
-        )
+        ),
     ):
         """Initialises a new interop application"""
 
@@ -51,7 +49,7 @@ class InitCli(typer.Typer):
                 typer.style(
                     "\nLocation not empty", fg=typer.colors.RED, bold=True
                 ),
-                color=True
+                color=True,
             )
             raise typer.Abort()
 
@@ -84,7 +82,7 @@ class InitCli(typer.Typer):
             "email": email,
             "import_name": import_name,
             "name": name,
-            "type": type
+            "type": type,
         }
 
         #: App folder (name)

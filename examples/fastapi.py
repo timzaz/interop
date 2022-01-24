@@ -1,35 +1,31 @@
-import dotenv
+import asyncio
 import os
+import typing
+from uuid import uuid4
 
-try:
-    #: Set the environment variables
-    env_dir = None
-    path = dotenv.find_dotenv(".env.local", usecwd=True)
+import dotenv
+import uvicorn
+from asgiref.typing import ASGI3Application
+from fastapi.applications import FastAPI
 
-    if path and env_dir is None:
-        env_dir = os.path.dirname(path)
-        dotenv.load_dotenv(path)
+from interop import Exchanges
+from interop import Interop
+from interop import Packet
+from interop import publish
+from interop import subscribe
+from interop.utils import now
 
-    #: The remainder of the code should be run from the .env.local directory
-    if env_dir and os.getcwd() != env_dir:
-        os.chdir(env_dir)
+#: Set the environment variables
+env_dir = None
+path = dotenv.find_dotenv(".env.local", usecwd=True)
 
-    import uvicorn
-    from asgiref.typing import ASGI3Application
-    from fastapi.applications import FastAPI
+if path and env_dir is None:
+    env_dir = os.path.dirname(path)
+    dotenv.load_dotenv(path)
 
-finally:
-    import asyncio
-    import os
-    import typing
-    from uuid import uuid4
-
-    from interop import Exchanges
-    from interop import Interop
-    from interop import Packet
-    from interop import publish
-    from interop import subscribe
-    from interop.utils import now
+#: The remainder of the code should be run from the .env.local directory
+if env_dir and os.getcwd() != env_dir:
+    os.chdir(env_dir)
 
 
 @publish
@@ -64,9 +60,7 @@ def make_handler(name: str):
 
 subscribe("fastapi.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.fastapi",
-    os.getenv("RMQ_BROKER_URI", ""),
-    type="publish"
+    "examples.fastapi", os.getenv("RMQ_BROKER_URI", ""), type="publish"
 )
 app = FastAPI(
     description="Interop embedded in a web application.",
@@ -100,5 +94,5 @@ if __name__ == "__main__":
         typing.cast(ASGI3Application, app),
         host="0.0.0.0",
         port=8000,
-        debug=True
+        debug=True,
     )

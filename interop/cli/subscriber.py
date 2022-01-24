@@ -1,10 +1,10 @@
 import importlib
 import inspect
 import os
-import typer
 import types
 import typing
 
+import typer
 from jinja2 import Environment
 
 from .utils import get_import_name
@@ -22,9 +22,7 @@ class SubscriberCli(typer.Typer):
     ):
 
         super().__init__(name=name, help=help, **kwargs)
-        self.callback(
-            invoke_without_command=True
-        )(self.subscriber)
+        self.callback(invoke_without_command=True)(self.subscriber)
 
     def subscriber(
         self,
@@ -32,7 +30,7 @@ class SubscriberCli(typer.Typer):
         name: str = typer.Argument(
             ...,
             help="The name of the subscriber.",
-        )
+        ),
     ):
         """Scaffolds a new subscriber"""
 
@@ -40,15 +38,13 @@ class SubscriberCli(typer.Typer):
 
         module: str = typer.prompt(
             "The module at whose directory the subscriber will be placed",
-            default=f"{import_name}.subscribers"
+            default=f"{import_name}.subscribers",
         )
 
         module_module: typing.Optional[
             types.ModuleType
         ] = importlib.import_module(module)
-        subscriber_dir: str = os.path.dirname(
-            inspect.getfile(module_module)
-        )
+        subscriber_dir: str = os.path.dirname(inspect.getfile(module_module))
 
         if not os.path.exists(subscriber_dir):
             os.mkdir(subscriber_dir)
@@ -61,9 +57,7 @@ class SubscriberCli(typer.Typer):
         dir = subscriber_dir
         env = Environment()
         funcname: str = snake_case(name).replace("-", "_")
-        kwargs = {
-            "name": funcname
-        }
+        kwargs = {"name": funcname}
         templates_dir: str = get_templates_directory()
 
         working_file: str = f"{funcname}.py"

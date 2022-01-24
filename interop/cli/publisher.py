@@ -1,10 +1,10 @@
 import importlib
 import inspect
 import os
-import typer
 import types
 import typing
 
+import typer
 from jinja2 import Environment
 
 from .utils import get_import_name
@@ -22,9 +22,7 @@ class PublisherCli(typer.Typer):
     ):
 
         super().__init__(name=name, help=help, **kwargs)
-        self.callback(
-            invoke_without_command=True
-        )(self.publisher)
+        self.callback(invoke_without_command=True)(self.publisher)
 
     def publisher(
         self,
@@ -32,7 +30,7 @@ class PublisherCli(typer.Typer):
         name: str = typer.Argument(
             ...,
             help="The name of the publisher.",
-        )
+        ),
     ):
         """Scaffolds a new publisher"""
 
@@ -40,15 +38,13 @@ class PublisherCli(typer.Typer):
 
         module: str = typer.prompt(
             "The module at whose directory the publisher will be placed",
-            default=f"{import_name}.publishers"
+            default=f"{import_name}.publishers",
         )
 
         module_module: typing.Optional[
             types.ModuleType
         ] = importlib.import_module(module)
-        publisher_dir: str = os.path.dirname(
-            inspect.getfile(module_module)
-        )
+        publisher_dir: str = os.path.dirname(inspect.getfile(module_module))
 
         if not os.path.exists(publisher_dir):
             os.mkdir(publisher_dir)
@@ -61,9 +57,7 @@ class PublisherCli(typer.Typer):
         dir = publisher_dir
         env = Environment()
         funcname: str = snake_case(name).replace("-", "_")
-        kwargs = {
-            "name": funcname
-        }
+        kwargs = {"name": funcname}
         templates_dir: str = get_templates_directory()
 
         working_file: str = f"{funcname}.py"

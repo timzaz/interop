@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import hashlib
@@ -48,9 +47,7 @@ __all__ = (
 )
 
 __deffered_publishers: typing.List[
-    typing.Callable[
-        [typing.Dict[str, typing.Any]], typing.Coroutine
-    ]
+    typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
 ] = list()
 
 __deffered_subscribers: typing.List[
@@ -111,13 +108,13 @@ def publish(
     func: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
 ) -> typing.Callable[
     [typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]],
-    typing.Any
+    typing.Any,
 ]:
     """Registers a publisher.
 
-      >>> @publish()
-      >>> async def monitor_weather(app: typing.Dict[str, typing.Any]):
-      >>>     ...
+    >>> @publish()
+    >>> async def monitor_weather(app: typing.Dict[str, typing.Any]):
+    >>>     ...
     """
 
     __deffered_publishers.append(func)
@@ -177,16 +174,16 @@ def rpc_result(interop: Interop):
 
 
 def subscribe(
-    routing_key: str, exchange: str,
+    routing_key: str,
+    exchange: str,
 ) -> typing.Callable[
-    [typing.Callable[[Packet], typing.Coroutine]],
-    typing.Any
+    [typing.Callable[[Packet], typing.Coroutine]], typing.Any
 ]:
     """Registers a subscriber.
 
-      >>> @subscribe("route", "exchange")
-      >>> async def send_sms(packet: Packet):
-      >>>     ...
+    >>> @subscribe("route", "exchange")
+    >>> async def send_sms(packet: Packet):
+    >>>     ...
     """
 
     def inner_subscribe(func: typing.Callable[[Packet], typing.Coroutine]):
@@ -219,7 +216,7 @@ class Interop:
         *,
         debug: bool = False,
         exchanges: typing.Optional[typing.List[typing.Tuple[str, str]]] = None,
-        type: typing.Literal["publish" , "subscribe"] = "subscribe",
+        type: typing.Literal["publish", "subscribe"] = "subscribe",
     ):
         """Initialise the interoperable.
 
@@ -364,9 +361,7 @@ class Interop:
         """
 
         if self._type != "publish":
-            raise ValueError(
-                "This instance is does not accept publishers."
-            )
+            raise ValueError("This instance is does not accept publishers.")
 
         if not iscoroutinefunction(f):
             raise ValueError(

@@ -1,33 +1,30 @@
+import asyncio
 import os
+import signal
+import sys
+import typing
+from uuid import uuid4
 
 import dotenv
 
-try:
-    #: Set the environment variables
-    env_dir = None
-    path = dotenv.find_dotenv(".env.local", usecwd=True)
+from interop import Exchanges
+from interop import Interop
+from interop import Packet
+from interop import publish
+from interop import subscribe
+from interop.utils import now
 
-    if path and env_dir is None:
-        env_dir = os.path.dirname(path)
-        dotenv.load_dotenv(path)
+#: Set the environment variables
+env_dir = None
+path = dotenv.find_dotenv(".env.local", usecwd=True)
 
-    #: The remainder of the code should be run from the .env.local directory
-    if env_dir and os.getcwd() != env_dir:
-        os.chdir(env_dir)
-finally:
-    import asyncio
-    import os
-    import signal
-    import sys
-    import typing
-    from uuid import uuid4
+if path and env_dir is None:
+    env_dir = os.path.dirname(path)
+    dotenv.load_dotenv(path)
 
-    from interop import Exchanges
-    from interop import Interop
-    from interop import Packet
-    from interop import publish
-    from interop import subscribe
-    from interop.utils import now
+#: The remainder of the code should be run from the .env.local directory
+if env_dir and os.getcwd() != env_dir:
+    os.chdir(env_dir)
 
 
 @publish
@@ -40,9 +37,6 @@ async def emitter(app: typing.Dict[str, typing.Any]):
         )
 
         await asyncio.sleep(2)
-
-
-print(emitter)
 
 
 def make_handler(name: str):
@@ -65,9 +59,7 @@ def make_handler(name: str):
 
 subscribe("simple.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.simple",
-    os.getenv("RMQ_BROKER_URI", ""),
-    type="publish"
+    "examples.simple", os.getenv("RMQ_BROKER_URI", ""), type="publish"
 )
 
 

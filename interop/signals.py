@@ -1,4 +1,3 @@
-
 from blinker import NamedSignal
 from blinker import Namespace
 

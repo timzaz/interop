@@ -1,11 +1,12 @@
-import dotenv
 import importlib
 import inspect
 import os
 import re
-import typer
 import types
 import typing
+
+import dotenv
+import typer
 
 
 def get_import_name() -> str:
@@ -36,20 +37,16 @@ def get_templates_directory() -> str:
 
     typer.echo(
         typer.style(
-            "\nDeducing templates directory",
-            fg=typer.colors.BLUE,
-            bold=True
+            "\nDeducing templates directory", fg=typer.colors.BLUE, bold=True
         )
     )
 
     templates_module_name: str = typer.prompt(
         "Enter the containing directory or module for the templates directory",
         default="interop.cli",
-        type=str
+        type=str,
     )
-    templates_module: typing.Optional[
-        types.ModuleType
-    ] = None
+    templates_module: typing.Optional[types.ModuleType] = None
 
     try:
         templates_module: typing.Optional[
@@ -60,8 +57,7 @@ def get_templates_directory() -> str:
 
     templates_dir: str = (
         os.path.join(
-            os.path.dirname(inspect.getfile(templates_module)),
-            "templates"
+            os.path.dirname(inspect.getfile(templates_module)), "templates"
         )
         if templates_module is not None
         else templates_module_name
@@ -72,7 +68,7 @@ def get_templates_directory() -> str:
             typer.style(
                 "\nTemplates directory not found",
                 fg=typer.colors.RED,
-                bold=True
+                bold=True,
             )
         )
         raise typer.Abort()
