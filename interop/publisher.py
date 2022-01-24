@@ -1,6 +1,3 @@
-""":module:`server.lib.interop.publisher` RMQ Publisher
-
-"""
 
 import pickle
 import typing

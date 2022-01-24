@@ -1,6 +1,3 @@
-""":module:`server.lib.interop.subscriber` RMQ Subscriber
-
-"""
 
 import pickle
 import typing

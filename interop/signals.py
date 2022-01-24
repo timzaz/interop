@@ -1,6 +1,3 @@
-""":module:`server.lib.interop.signals` Interop Signals
-
-"""
 
 from blinker import NamedSignal
 from blinker import Namespace
