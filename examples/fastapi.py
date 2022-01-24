@@ -1,11 +1,10 @@
-import os
-
 import dotenv
+import os
 
 try:
     #: Set the environment variables
     env_dir = None
-    path = dotenv.find_dotenv(".env", usecwd=True)
+    path = dotenv.find_dotenv(".env.local", usecwd=True)
 
     if path and env_dir is None:
         env_dir = os.path.dirname(path)
@@ -28,26 +27,18 @@ finally:
     from interop import Exchanges
     from interop import Interop
     from interop import Packet
-    from interop import interop_ready
+    from interop import publish
+    from interop import subscribe
     from interop.utils import now
 
 
-@interop_ready.connect
-def register(sender: Interop):
-    """Register subscriber consumers and crunchers."""
-
-    sender.add_handler(
-        "simple.#", Exchanges.NOTIFY.value, make_handler("Error")
-    )
-    sender.add_cruncher(emitter)
-
-
-async def emitter(app):
+@publish
+async def emitter(app: typing.Dict[str, typing.Any]):
     while True:
         now(
             {"message": "Some generic info message", "sync": uuid4().hex},
             Exchanges.NOTIFY.value,
-            "simple.message",
+            "fastapi.message",
         )
 
         await asyncio.sleep(2)
@@ -71,8 +62,12 @@ def make_handler(name: str):
     return print_log
 
 
-the_interop = Interop(name="Simple Interop")
-
+subscribe("fastapi.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
+the_interop = Interop(
+    "examples.fastapi",
+    os.getenv("RMQ_BROKER_URI", ""),
+    type="publish"
+)
 app = FastAPI(
     description="Interop embedded in a web application.",
     docs_url="/_api/docs",
@@ -91,14 +86,7 @@ async def index():
 
 @app.on_event("startup")
 async def startup_event():
-    await the_interop.init_app(
-        root_path=os.getcwd(),
-        app={
-            "DEBUG": True,
-            "IMPORT_NAME": "examples.simple",
-            "RMQ_BROKER_URI": os.getenv("RMQ_BROKER_URI"),
-        },
-    )
+    await the_interop.init_app(app={})
 
 
 @app.on_event("shutdown")
@@ -107,6 +95,10 @@ async def shutdown_event():
     the_interop.subscriber.stop()
 
 
-uvicorn.run(
-    typing.cast(ASGI3Application, app), host="0.0.0.0", port=8000, debug=True
-)
+if __name__ == "__main__":
+    uvicorn.run(
+        typing.cast(ASGI3Application, app),
+        host="0.0.0.0",
+        port=8000,
+        debug=True
+    )

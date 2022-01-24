@@ -5,7 +5,7 @@ import dotenv
 try:
     #: Set the environment variables
     env_dir = None
-    path = dotenv.find_dotenv(".env", usecwd=True)
+    path = dotenv.find_dotenv(".env.local", usecwd=True)
 
     if path and env_dir is None:
         env_dir = os.path.dirname(path)
@@ -25,21 +25,13 @@ finally:
     from interop import Exchanges
     from interop import Interop
     from interop import Packet
-    from interop import interop_ready
+    from interop import publish
+    from interop import subscribe
     from interop.utils import now
 
 
-@interop_ready.connect
-def register(sender: Interop):
-    """Register subscriber consumers and crunchers."""
-
-    sender.add_handler(
-        "simple.#", Exchanges.NOTIFY.value, make_handler("Logger")
-    )
-    sender.add_cruncher(emitter)
-
-
-async def emitter(app):
+@publish
+async def emitter(app: typing.Dict[str, typing.Any]):
     while True:
         now(
             {"message": "Some generic info message", "sync": uuid4().hex},
@@ -48,6 +40,9 @@ async def emitter(app):
         )
 
         await asyncio.sleep(2)
+
+
+print(emitter)
 
 
 def make_handler(name: str):
@@ -68,10 +63,16 @@ def make_handler(name: str):
     return print_log
 
 
-the_interop = Interop(name="Simple Interop")
+subscribe("simple.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
+the_interop = Interop(
+    "examples.simple",
+    os.getenv("RMQ_BROKER_URI", ""),
+    type="publish"
+)
 
 
 def signint_handler(p0, p1):
+    print("stoppiing")
     the_interop.publisher.stop()
     the_interop.subscriber.stop()
 
@@ -80,7 +81,6 @@ def signint_handler(p0, p1):
 
 async def main():
     await the_interop.init_app(
-        root_path=os.getcwd(),
         app={
             "DEBUG": True,
             "IMPORT_NAME": "examples.simple",
