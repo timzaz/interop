@@ -1,6 +1,3 @@
-""":module:`server.lib.interop` Broker Utilities
-
-"""
 
 from __future__ import annotations
 
@@ -17,6 +14,7 @@ from asyncio import create_task
 from asyncio import get_event_loop
 from asyncio import iscoroutinefunction
 from functools import cached_property
+from functools import update_wrapper
 from functools import wraps
 
 from .publisher import Publisher
@@ -48,6 +46,16 @@ __all__ = (
     "very_low",
     "Interop",
 )
+
+__deffered_publishers: typing.List[
+    typing.Callable[
+        [typing.Dict[str, typing.Any]], typing.Coroutine
+    ]
+] = list()
+
+__deffered_subscribers: typing.List[
+    typing.Tuple[str, str, typing.Callable[[Packet], typing.Coroutine]]
+] = list()
 
 default_config: typing.Dict[str, typing.Any] = {
     "IMPORT_NAME": __name__,
@@ -82,7 +90,7 @@ def ack(interop: Interop):
 
 
 def before_connect(f):
-    """Ensures handlers and crunchers are specified before the interop is
+    """Ensures handlers and publishs are specified before the interop is
     connected to the RMQ server.
 
     """
@@ -91,12 +99,54 @@ def before_connect(f):
     def wrapper_func(self, *args, **kwargs):
         if self._connected:
             raise AssertionError(
-                "This cruncher / handler must be specified before connecting "
+                "This publish / handler must be specified before connecting "
                 "the app to the broker."
             )
         return f(self, *args, **kwargs)
 
     return wrapper_func
+
+
+def publish(
+    func: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
+) -> typing.Callable[
+    [typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]],
+    typing.Any
+]:
+    """Registers a publisher.
+
+      >>> @publish()
+      >>> async def monitor_weather(app: typing.Dict[str, typing.Any]):
+      >>>     ...
+    """
+
+    __deffered_publishers.append(func)
+    update_wrapper(publish, func)
+
+    return publish
+
+
+@interop_ready.connect
+def register_deferred(sender: Interop):
+    global __deffered_publishers
+    global __deffered_subscribers
+
+    try:
+        while True:
+            publisher = __deffered_publishers.pop(0)
+            sender.publish(publisher)
+    except IndexError:
+        pass
+
+    try:
+        while True:
+            (routing_key, exchange, subscriber) = __deffered_subscribers.pop(0)
+            sender.subscribe(routing_key, exchange, subscriber)
+    except IndexError:
+        pass
+
+    del __deffered_publishers
+    del __deffered_subscribers
 
 
 def rpc_result(interop: Interop):
@@ -126,6 +176,28 @@ def rpc_result(interop: Interop):
     return _rpc_result
 
 
+def subscribe(
+    routing_key: str, exchange: str,
+) -> typing.Callable[
+    [typing.Callable[[Packet], typing.Coroutine]],
+    typing.Any
+]:
+    """Registers a subscriber.
+
+      >>> @subscribe("route", "exchange")
+      >>> async def send_sms(packet: Packet):
+      >>>     ...
+    """
+
+    def inner_subscribe(func: typing.Callable[[Packet], typing.Coroutine]):
+        """Decorates an actual subscriber."""
+
+        __deffered_subscribers.append((routing_key, exchange, func))
+        update_wrapper(inner_subscribe, func)
+
+    return inner_subscribe
+
+
 class Interop:
     """An interoperable script. One which has both publisher and subscriber
     running as coroutines.
@@ -133,7 +205,7 @@ class Interop:
     ..note::
       The Subscriber can hold as many handlers as possible - up to the devs to
       decide what's `possible` for a particular project.
-      An Interop may hold as many crunchers too. Crunchers are basically
+      An Interop may hold as many publishers too. Publishers are basically
       observables, configured to carry out some actions when certain conditions
       are met. The possibility for race conditions is very high. Use with
       extreme caution!
@@ -142,9 +214,12 @@ class Interop:
 
     def __init__(
         self,
-        *,
         name: str,
+        uri: str,
+        *,
+        debug: bool = False,
         exchanges: typing.Optional[typing.List[typing.Tuple[str, str]]] = None,
+        type: typing.Literal["publish" , "subscribe"] = "subscribe",
     ):
         """Initialise the interoperable.
 
@@ -153,10 +228,14 @@ class Interop:
 
         """
 
+        self.broker_uri = uri
+        assert self.broker_uri is not None, "RMQ_BROKER_URI must not be None."
+
         self._connected: bool = False
-        self._crunchers: typing.Set[
+        self._publishers: typing.Set[
             typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
         ] = set()
+        self._debug = debug
 
         self._publisher_started = Event()
         self._rpcs_pending: typing.Dict[str, Event] = dict()
@@ -165,6 +244,7 @@ class Interop:
         self._subscriber_started = Event()
         self._thread = threading.current_thread().ident
         self._threads_started = False
+        self._type = type
 
         if exchanges:
             self.exchanges = exchanges
@@ -175,7 +255,7 @@ class Interop:
         self.name = name
         #: Create the publisher queue and make it accessible to publishers.
         #: Do not force confirmation of actual connection to RMQ to identify
-        #: as connected - connected simply means all the handlers and crunchers
+        #: as connected - connected simply means all the handlers and publishs
         #: have been defined for the interop.
         #: However, ensure the queue maxes out so as not to cause memory issues
         #: TODO: Figure out the ideal max size
@@ -185,7 +265,7 @@ class Interop:
         """Start the tasks."""
 
         #: Subscribe to the Ack method
-        self.add_handler(
+        self.subscribe(
             f"{self.name}.ack",
             Exchanges.HEARTBEAT.value,
             ack(self),
@@ -193,7 +273,7 @@ class Interop:
 
         #: Subscribe to the RPC result method
         #: This handler receives the sent RPC's response
-        self.add_handler(
+        self.subscribe(
             f"{self.name}.{self._thread}.rpc",
             Exchanges.APPLICATION.value,
             rpc_result(self),
@@ -229,32 +309,78 @@ class Interop:
         self._connected = True
 
         #: Accept and manipulate the data.
-        for f in self._crunchers:
+        for f in self._publishers:
             self.futures.append(create_task(f(self.app)))
 
+    async def init_app(
+        self,
+        *,
+        app: typing.Dict[str, typing.Any] = default_config,
+    ):
+        """Initialise."""
+
+        self.app = app
+
+        #: Signal to bootstrap all cogs that have been brought into the
+        #: execution context.
+        send_async = getattr(interop_ready, "send_async")
+        send_async(self)
+
+        loop = get_event_loop()
+        self.publisher = Publisher(
+            self.name, self.broker_uri, self.exchanges, self._thread, loop
+        )
+        self.subscriber = Subscriber(
+            self.name, self.broker_uri, self.exchanges, self._thread, loop
+        )
+
+        app["interop"] = self
+        await self._connect()
+
+    @cached_property
+    def instance(self):
+        """The interop instance is a combination of the dirname of this file,
+        the virtualenv dirname and the host name.
+        """
+
+        name = f"{self.servername}::{self.virtualenv}::{self.servername}"
+        _instance = hashlib.md5(
+            hashlib.md5(bytes(name, "utf-8")).digest()
+        ).digest()
+        return _instance
+
     @before_connect
-    def add_cruncher(
+    def publish(
         self,
         f: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine],
     ):
         """A callable that accepts 1 parameter that is run in COG mode as the
         primary function.
 
-        For example: A cruncher could be created just to capture and log health
+        For example: A publish could be created just to capture and log health
         information of a server system or to come up with suggestions or update
         system information such as generic information on location boundaries.
 
         """
 
-        #: TODO: Also ensure the func accepts 1 argument of type ``Config``
+        if self._type != "publish":
+            raise ValueError(
+                "This instance is does not accept publishers."
+            )
+
         if not iscoroutinefunction(f):
             raise ValueError(
                 "Cruncher expected value to be an asynchronous callable."
             )
-        self._crunchers.add(f)
+        self._publishers.add(f)
+
+    def servername(self):
+        """Returns the server name these files are on."""
+
+        return socket.gethostname()
 
     @before_connect
-    def add_handler(
+    def subscribe(
         self,
         routing_key: str,
         exchange: str,
@@ -316,63 +442,11 @@ class Interop:
         old_func = self._subscriber_handlers.get(endpoint)
         if old_func is not None and old_func != handler:
             raise AssertionError(
-                "Handler function mapping is overwriting an "
-                f"existing handler function: {endpoint}"
+                "Subscriber is overwriting an existing subscriber: {endpoint}"
             )
         #: The handler that would run would be the one for the endpoint
         #: whose regex matches first for the exchange - supplied in Packet
         self._subscriber_handlers[endpoint] = handler
-
-    async def init_app(
-        self,
-        *,
-        root_path: str,
-        app: typing.Dict[str, typing.Any] = default_config,
-    ):
-        """Initialise."""
-
-        self.broker_uri = app.get("RMQ_BROKER_URI")
-        assert (
-            self.broker_uri is not None and type(self.broker_uri) == str
-        ), "RMQ_BROKER_URI must not be None."
-
-        self.name = app.get("IMPORT_NAME", self.name)  # type: ignore
-        self.root_path = root_path
-
-        self.app = app
-
-        #: Signal to bootstrap all cogs that have been brought into the
-        #: execution context.
-        send_async = getattr(interop_ready, "send_async")
-        send_async(self)
-
-        loop = get_event_loop()
-        self.publisher = Publisher(
-            self.name, self.broker_uri, self.exchanges, self._thread, loop
-        )
-        self.subscriber = Subscriber(
-            self.name, self.broker_uri, self.exchanges, self._thread, loop
-        )
-
-        app["interop"] = self
-        await self._connect()
-
-    @cached_property
-    def instance(self):
-        """The interop instance is a combination of the dirname of this file,
-        the virtualenv dirname and the host name.
-        """
-
-        name = f"{self.servername}::{self.virtualenv}::{self.servername}"
-        _instance = hashlib.md5(
-            hashlib.md5(bytes(name, "utf-8")).digest()
-        ).digest()
-        return _instance
-
-    def servername(self):
-        """Returns the server name these files are on."""
-
-        return socket.gethostname()
 
     @property
     def virtualenv(self):
