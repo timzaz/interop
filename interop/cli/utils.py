@@ -8,7 +8,7 @@ import types
 import typing
 
 
-def get_import_name():
+def get_import_name() -> str:
     #: Set the environment variables
     env_dir = None
     path = dotenv.find_dotenv(".env.local", usecwd=True)
@@ -27,6 +27,8 @@ def get_import_name():
         raise RuntimeError(
             "Make sure you specify the IMPORT_NAME in .env.local"
         )
+
+    return name
 
 
 def get_templates_directory() -> str:
