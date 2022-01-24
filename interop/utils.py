@@ -1,6 +1,3 @@
-""":module:`server.lib.interop.utils` Broker Utilities
-
-"""
 
 import time
 import typing
@@ -15,7 +12,7 @@ _interop: typing.Any = None
 
 
 @interop_ready.connect
-async def _set_interop(sender):
+def _set_interop(sender):
     """Sets the global interop instance for the module"""
 
     global _interop
@@ -51,7 +48,8 @@ class ExchangeTypes(Enum):
 
 @total_ordering
 class Packet:
-    """A packet contains all that is necessary to transmit through the broker."""
+    """A packet contains all that is necessary to transmit through the broker.
+    """
 
     __slots__ = (
         "app",
