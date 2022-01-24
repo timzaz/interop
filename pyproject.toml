@@ -43,7 +43,7 @@ license = "private"
 name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/interop.git"
-version = "0.2.1"
+version = "0.3.0"
 
 [tool.poetry.dependencies]
 python = "^3.10.1"
@@ -51,6 +51,8 @@ pika = "^1.2.0"
 python-dotenv = "^0.19.1"
 blinker-async = "^0.0.3"
 black = {version = "^21.12b0", allow-prereleases = true}
+typer = "^0.4.0"
+Jinja2 = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
@@ -58,3 +60,6 @@ flake8 = "^3.8.4"
 ipython = "^7.19.0"
 isort = "5.8.0"
 pytest = "^6.2.2"
+
+[tool.poetry.scripts]
+interop = "interop.cli:main"
