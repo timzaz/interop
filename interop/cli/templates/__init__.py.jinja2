@@ -2,20 +2,19 @@ import dotenv
 import os
 import typing
 
-try:
-    #: Set the environment variables
-    env_dir = None
-    path = dotenv.find_dotenv(".env.local", usecwd=True)
+from interop import Interop
 
-    if path and env_dir is None:
-        env_dir = os.path.dirname(path)
-        dotenv.load_dotenv(path)
+#: Set the environment variables
+env_dir = None
+path = dotenv.find_dotenv(".env.local", usecwd=True)
 
-    #: The remainder of the code should be run from the .env.local directory
-    if env_dir and os.getcwd() != env_dir:
-        os.chdir(env_dir)
-finally:
-    from interop import Interop
+if path and env_dir is None:
+    env_dir = os.path.dirname(path)
+    dotenv.load_dotenv(path)
+
+#: The remainder of the code should be run from the .env.local directory
+if env_dir and os.getcwd() != env_dir:
+    os.chdir(env_dir)
 
 config: typing.Dict[str, typing.Any] = dict()  #: populate accordingly
 interop = Interop(

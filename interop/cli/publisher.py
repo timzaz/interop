@@ -35,24 +35,45 @@ class PublisherCli(typer.Typer):
         """Scaffolds a new publisher"""
 
         import_name = get_import_name()
+        default_module = f"{import_name}.publishers"
 
         module: str = typer.prompt(
             "The module at whose directory the publisher will be placed",
-            default=f"{import_name}.publishers",
+            default=default_module,
         )
 
-        module_module: typing.Optional[
-            types.ModuleType
-        ] = importlib.import_module(module)
-        publisher_dir: str = os.path.dirname(inspect.getfile(module_module))
+        publisher_dir: str | None = None
+        try:
+            if module == default_module:
+                import_module: typing.Optional[
+                    types.ModuleType
+                ] = importlib.import_module(import_name)
+                publisher_dir = os.path.join(
+                    os.path.dirname(inspect.getfile(import_module)),
+                    "publishers"
+                )
 
-        if not os.path.exists(publisher_dir):
-            os.mkdir(publisher_dir)
+                if not os.path.exists(publisher_dir):
+                    os.mkdir(publisher_dir)
 
-            init_dir: str = os.path.join(publisher_dir, "__init__.py")
-            if not os.path.exists(init_dir):
-                with open(init_dir, "w") as file:
-                    file.write("")
+                    init_dir: str = os.path.join(publisher_dir, "__init__.py")
+                    if not os.path.exists(init_dir):
+                        with open(init_dir, "w") as file:
+                            file.write("")
+            else:
+                module_module: typing.Optional[
+                    types.ModuleType
+                ] = importlib.import_module(module)
+                publisher_dir = os.path.dirname(
+                    inspect.getfile(module_module)
+                )
+        except:  # noqa
+            typer.echo(f"Could not import module: {module}\n\n")
+            raise typer.Abort()
+
+        if not publisher_dir:
+            typer.echo("Could not deduce publisher directory.\n\n")
+            raise typer.Abort()
 
         dir = publisher_dir
         env = Environment()
