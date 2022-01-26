@@ -50,7 +50,7 @@ class PublisherCli(typer.Typer):
                 ] = importlib.import_module(import_name)
                 publisher_dir = os.path.join(
                     os.path.dirname(inspect.getfile(import_module)),
-                    "publishers"
+                    "publishers",
                 )
 
                 if not os.path.exists(publisher_dir):
@@ -64,9 +64,7 @@ class PublisherCli(typer.Typer):
                 module_module: typing.Optional[
                     types.ModuleType
                 ] = importlib.import_module(module)
-                publisher_dir = os.path.dirname(
-                    inspect.getfile(module_module)
-                )
+                publisher_dir = os.path.dirname(inspect.getfile(module_module))
         except:  # noqa
             typer.echo(f"Could not import module: {module}\n\n")
             raise typer.Abort()

@@ -50,7 +50,7 @@ class SubscriberCli(typer.Typer):
                 ] = importlib.import_module(import_name)
                 subscriber_dir = os.path.join(
                     os.path.dirname(inspect.getfile(import_module)),
-                    "subscribers"
+                    "subscribers",
                 )
 
                 if not os.path.exists(subscriber_dir):
