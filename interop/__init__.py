@@ -215,8 +215,7 @@ class Interop:
         uri: str,
         *,
         debug: bool = False,
-        exchanges: typing.Optional[typing.List[typing.Tuple[str, str]]] = None,
-        type: typing.Literal["publish", "subscribe"] = "subscribe",
+        exchanges: typing.List[typing.Tuple[str, str]] = default_exchanges,
     ):
         """Initialise the interoperable.
 
@@ -229,11 +228,10 @@ class Interop:
         assert self.broker_uri is not None, "RMQ_BROKER_URI must not be None."
 
         self._connected: bool = False
+        self._debug = debug
         self._publishers: typing.Set[
             typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
         ] = set()
-        self._debug = debug
-
         self._publisher_started = Event()
         self._rpcs_pending: typing.Dict[str, Event] = dict()
         self._rpcs_returned: typing.Dict[str, typing.Any] = dict()
@@ -241,13 +239,8 @@ class Interop:
         self._subscriber_started = Event()
         self._thread = threading.current_thread().ident
         self._threads_started = False
-        self._type = type
 
-        if exchanges:
-            self.exchanges = exchanges
-        else:
-            self.exchanges = default_exchanges
-
+        self.exchanges = exchanges
         self.futures = list()
         self.name = name
         #: Create the publisher queue and make it accessible to publishers.
@@ -359,9 +352,6 @@ class Interop:
         system information such as generic information on location boundaries.
 
         """
-
-        if self._type != "publish":
-            raise ValueError("This instance is does not accept publishers.")
 
         if not iscoroutinefunction(f):
             raise ValueError(
