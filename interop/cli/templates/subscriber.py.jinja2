@@ -3,7 +3,7 @@ from interop import Packet
 from interop import subscribe
 
 
-@subscribe("<routing-key>", "<exchange-name>")
+@subscribe("{{ routing_key }}", "{{ exchange }}")
 async def {{ name }}(packet: Packet):
     """This function reacts to messages routed to <routing-key> at
     <exchange-name> on the rabbitmq broker.
