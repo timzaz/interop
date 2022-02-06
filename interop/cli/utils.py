@@ -96,3 +96,16 @@ def space_case(name, lower=True):
         return re.sub(r"(_)([A-Za-z0-9])", r" \2", name).lower()
     else:
         return re.sub(r"(_)([A-Za-z0-9])", r" \2", name)
+
+
+def validate_name(name: str) -> str:
+    if not re.match("[a-zA-Z_]+", name):
+        raise typer.BadParameter(
+            typer.style(
+                "Valid value must match: [a-zA-Z_]+",
+                bold=True,
+                fg=typer.colors.RED,
+            )
+        )
+
+    return snake_case(name)
