@@ -6,8 +6,8 @@ import typer
 from jinja2 import Environment
 
 from .utils import get_templates_directory
-from .utils import snake_case
 from .utils import space_case
+from .utils import validate_name
 
 
 class InteropType(str, Enum):
@@ -38,12 +38,13 @@ class InitCli(typer.Typer):
         *,
         name: str = typer.Argument(
             ...,
+            callback=validate_name,
             help="The name of the application.",
         ),
     ):
         """Initialises a new interop application"""
 
-        app_folder: str = os.path.join(os.getcwd(), name)
+        app_folder: str = os.path.join(os.getcwd(), name.replace("_", "-"))
         if os.path.exists(app_folder):
             typer.echo(
                 typer.style(
@@ -56,33 +57,17 @@ class InitCli(typer.Typer):
         templates_dir: str = get_templates_directory()
 
         #: Variables
-        import_name: str = snake_case(name).replace("-", "_")
-        app: str = space_case(import_name).title()
+        app: str = space_case(name).title()
         author: str = typer.prompt("Author")
         email: str = typer.prompt("Author Email")
-        type = typer.prompt(
-            "Type",
-            default=InteropType.subscribe.value,
-            show_choices=True,
-            show_default=True,
-            type=InteropType,
-        )
-        type = type.split(".")[0]
-        dir: str = (
-            "publishers"
-            if type == InteropType.publish.value
-            else "subscribers"
-        )
 
         env = Environment()
         kwargs = {
             "app": app,
             "author": author,
-            "dir": dir,
             "email": email,
-            "import_name": import_name,
-            "name": name,
-            "type": type,
+            "import_name": name,
+            "name": app_folder,
         }
 
         #: App folder (name)
@@ -143,8 +128,8 @@ class InitCli(typer.Typer):
                 file.write(template.render(**kwargs))
 
         #: inner application folder (import_name)
-        os.mkdir(os.path.join(app_folder, import_name))
-        import_folder = os.path.join(app_folder, import_name)
+        os.mkdir(os.path.join(app_folder, name))
+        import_folder = os.path.join(app_folder, name)
 
         #: application.__init__.py
         working_file: str = "__init__.py"
