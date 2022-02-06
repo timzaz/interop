@@ -10,6 +10,7 @@ from jinja2 import Environment
 from .utils import get_import_name
 from .utils import get_templates_directory
 from .utils import snake_case
+from .utils import validate_name
 
 
 class PublisherCli(typer.Typer):
@@ -29,6 +30,7 @@ class PublisherCli(typer.Typer):
         *,
         name: str = typer.Argument(
             ...,
+            callback=validate_name,
             help="The name of the publisher.",
         ),
     ):
@@ -76,7 +78,9 @@ class PublisherCli(typer.Typer):
         dir = publisher_dir
         env = Environment()
         funcname: str = snake_case(name).replace("-", "_")
-        kwargs = {"name": funcname}
+        kwargs = {
+            "name": funcname,
+        }
         templates_dir: str = get_templates_directory()
 
         working_file: str = f"{funcname}.py"
