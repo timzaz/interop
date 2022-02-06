@@ -20,7 +20,6 @@ config: typing.Dict[str, typing.Any] = dict()  #: populate accordingly
 interop = Interop(
     os.getenv("IMPORT_NAME"),
     os.getenv("RMQ_BROKER_URI", ""),
-    type="publish"  #: or "subscribe"
 )
 
 #: later
