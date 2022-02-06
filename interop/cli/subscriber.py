@@ -7,9 +7,12 @@ import typing
 import typer
 from jinja2 import Environment
 
+from interop import Exchanges
+
 from .utils import get_import_name
 from .utils import get_templates_directory
 from .utils import snake_case
+from .utils import validate_name
 
 
 class SubscriberCli(typer.Typer):
@@ -29,7 +32,23 @@ class SubscriberCli(typer.Typer):
         *,
         name: str = typer.Argument(
             ...,
+            callback=validate_name,
             help="The name of the subscriber.",
+        ),
+        exchange: Exchanges = typer.Option(
+            ...,
+            "--exchange",
+            "-e",
+            help="The exchange name.",
+            prompt="Which exchange would you like to connect to?",
+            show_choices=True,
+        ),
+        routing_key: str = typer.Option(
+            ...,
+            "--routing-key",
+            "-r",
+            help="The routing key.",
+            prompt="Routing Key",
         ),
     ):
         """Scaffolds a new subscriber"""
@@ -78,7 +97,11 @@ class SubscriberCli(typer.Typer):
         dir = subscriber_dir
         env = Environment()
         funcname: str = snake_case(name).replace("-", "_")
-        kwargs = {"name": funcname}
+        kwargs = {
+            "exchange": exchange.value,
+            "name": funcname,
+            "routing_key": routing_key,
+        }
         templates_dir: str = get_templates_directory()
 
         working_file: str = f"{funcname}.py"
