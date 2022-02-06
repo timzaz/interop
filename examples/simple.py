@@ -59,7 +59,7 @@ def make_handler(name: str):
 
 subscribe("simple.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.simple", os.getenv("RMQ_BROKER_URI", ""), type="publish"
+    "examples.simple", os.getenv("RMQ_BROKER_URI", ""),
 )
 
 

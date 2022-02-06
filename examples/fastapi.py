@@ -60,7 +60,7 @@ def make_handler(name: str):
 
 subscribe("fastapi.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.fastapi", os.getenv("RMQ_BROKER_URI", ""), type="publish"
+    "examples.fastapi", os.getenv("RMQ_BROKER_URI", ""),
 )
 app = FastAPI(
     description="Interop embedded in a web application.",
