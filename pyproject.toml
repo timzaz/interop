@@ -43,15 +43,15 @@ license = "private"
 name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/interop.git"
-version = "0.3.5"
+version = "0.3.6"
 
 [tool.poetry.dependencies]
 python = ">=3.10.1,<4.0"
 pika = "^1.2.0"
-python-dotenv = "^0.19.1"
 blinker-async = "^0.0.3"
 Jinja2 = "^3.0.3"
 typer = "^0.7.0"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
