@@ -72,7 +72,7 @@ class Packet:
         routing_key: str = "",
         content_type: str = "application/octet-stream",
         expiration: int = 5,
-        referrer: str = None,
+        referrer: str | None = None,
         delivery_mode: int = 2,
     ):
 

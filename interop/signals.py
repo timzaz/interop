@@ -1,7 +1,7 @@
-from blinker import NamedSignal
-from blinker import Namespace
+from asyncblink import NamedAsyncSignal
+from asyncblink import Namespace
 
 _signals = Namespace()
 
 #: Runs code after the Pacemaker extension has been bootstrapped.
-interop_ready: NamedSignal = _signals.signal("interop-ready")
+interop_ready: NamedAsyncSignal = _signals.signal("interop-ready")
