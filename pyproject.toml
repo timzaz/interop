@@ -43,7 +43,7 @@ license = "private"
 name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/interop.git"
-version = "0.3.7"
+version = "0.3.8"
 
 [tool.poetry.dependencies]
 python = ">=3.10.1,<4.0"

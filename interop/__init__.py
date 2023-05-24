@@ -313,8 +313,7 @@ class Interop:
 
         #: Signal to bootstrap all cogs that have been brought into the
         #: execution context.
-        send_async = getattr(interop_ready, "send_async")
-        send_async(self)
+        interop_ready.send(self)
 
         loop = get_event_loop()
         self.publisher = Publisher(
