@@ -76,7 +76,7 @@ async def sample(app: typing.Dict[str, typing.Any]):
     """
 
     while True:
-        #: Add monitoring code here
+        #: Add publishing code here
 
         await asyncio.sleep(2)  #: Use appropriate sleep time
 
