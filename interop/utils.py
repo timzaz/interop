@@ -47,8 +47,7 @@ class ExchangeTypes(Enum):
 
 @total_ordering
 class Packet:
-    """A packet contains all that is necessary to transmit through the broker.
-    """
+    """A packet contains all that is necessary to transmit through the broker."""
 
     __slots__ = (
         "app",
