@@ -332,7 +332,7 @@ class Interop:
         the virtualenv dirname and the host name.
         """
 
-        name = f"{self.servername}::{self.virtualenv}::{self.servername}"
+        name = f"{self.servername}::{self.virtualenv}::{self.name}"
         _instance = hashlib.md5(
             hashlib.md5(bytes(name, "utf-8")).digest()
         ).digest()
