@@ -29,7 +29,6 @@ authors = [
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
 description = "Asynchronous publish/subscribe client for RabbitMQ,"
@@ -43,7 +42,7 @@ license = "private"
 name = "interop"
 readme = "README.md"
 repository = "https://github.com/timzaz/interop.git"
-version = "0.3.11"
+version = "0.3.12"
 
 [tool.poetry.dependencies]
 asyncblink = "^0.4.0"
