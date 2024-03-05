@@ -15,6 +15,7 @@ from asyncio import iscoroutinefunction
 from functools import cached_property
 from functools import update_wrapper
 from functools import wraps
+from uuid import uuid4
 
 from .publisher import Publisher
 from .signals import interop_ready
@@ -264,7 +265,7 @@ class Interop:
         #: Subscribe to the RPC result method
         #: This handler receives the sent RPC's response
         self.subscribe(
-            f"{self.name}.{self._thread}.rpc",
+            f"{self.name}.{self._thread}.{uuid4().hex}.rpc",
             Exchanges.APPLICATION.value,
             rpc_result(self),
         )
