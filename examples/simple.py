@@ -59,7 +59,8 @@ def make_handler(name: str):
 
 subscribe("simple.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.simple", os.getenv("RMQ_BROKER_URI", ""),
+    "examples.simple",
+    os.getenv("RMQ_BROKER_URI", ""),
 )
 
 
@@ -84,6 +85,5 @@ async def main():
 
 
 if __name__ == "__main__":
-
     signal.signal(signal.SIGINT, signint_handler)
     asyncio.run(main(), debug=True)
