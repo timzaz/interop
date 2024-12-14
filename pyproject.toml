@@ -8,7 +8,7 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-    "asyncblink==0.4.0",
+    "asyncblink>=0.5.0",
     "jinja2",
     "pika",
     "python-dotenv",
@@ -24,7 +24,7 @@ license = {file = "LICENSE"}
 name = "interop"
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
-version = "0.4.0"
+version = "0.4.1"
 
 [dependency-groups]
 dev = [
@@ -52,3 +52,6 @@ docstring-code-format = true
 
 [tool.uv.sources]
 interop = { workspace = true }
+
+[[tool.uv.index]]
+url = "https://pypi.poraodojuca.dev/"

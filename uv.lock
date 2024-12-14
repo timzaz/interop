@@ -44,12 +44,12 @@ wheels = [
 
 [[package]]
 name = "asyncblink"
-version = "0.4.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.5.0"
+source = { registry = "https://pypi.poraodojuca.dev/" }
 dependencies = [
     { name = "blinker" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b4/cc/23b86504b2c32757d1dd3ccc351eb9d7527bedcde21f8ae5872f0fae5e82/asyncblink-0.4.0.tar.gz", hash = "sha256:4a4d3a77c4692aeafc6c0a76204f09ba2f2006af7964ec8bc26b58208d5ec807", size = 2537 }
+sdist = { url = "https://pypi.poraodojuca.dev/asyncblink/asyncblink-0.5.0.tar.gz" }
 
 [[package]]
 name = "blinker"
@@ -142,7 +142,7 @@ wheels = [
 
 [[package]]
 name = "interop"
-version = "0.3.14"
+version = "0.4.0"
 source = { virtual = "." }
 dependencies = [
     { name = "asyncblink" },
@@ -165,7 +165,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "asyncblink", specifier = "==0.4.0" },
+    { name = "asyncblink", specifier = ">=0.5.0" },
     { name = "jinja2" },
     { name = "pika" },
     { name = "python-dotenv" },
