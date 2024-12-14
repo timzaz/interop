@@ -1,66 +1,54 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-exclude = '''
-^/(
-    | \.git
-    | \.venv
-    | build
-    | dist
-)/
-'''
-include = '\.pyi?$'
-line-length = 79
-preview = true
-target-version = ['py310']
-
-[tool.isort]
-force_single_line = "true"
-profile = "black"
-src_paths = ["interop"]
-
-[tool.poetry]
+[project]
 authors = [
-    "A. J. Wray <ajw@ajw.sl>",
+    {name = "A. J. Wray", email = "ajw@ajw.sl"}
 ]
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
 ]
-description = "Asynchronous publish/subscribe client for RabbitMQ,"
-homepage = "https://github.com/timzaz/interop"
+dependencies = [
+    "asyncblink==0.4.0",
+    "jinja2",
+    "pika",
+    "python-dotenv",
+    "typer",
+]
+description = "Asynchronous publish/subscribe client for RabbitMQ"
 keywords = [
     "publisher",
     "rabbitmq",
     "subscriber"
 ]
-license = "private"
+license = {file = "LICENSE"}
 name = "interop"
 readme = "README.md"
-repository = "https://github.com/timzaz/interop.git"
-version = "0.3.13"
+requires-python = ">=3.11,<4.0"
+version = "0.4.0"
 
-[tool.poetry.dependencies]
-asyncblink = "^0.4.0"
-Jinja2 = "^3.0.3"
-pika = "^1.2.0"
-python = ">=3.11,<4.0"
-python-dotenv = "^1.0.0"
-typer = "^0.7.0"
+[dependency-groups]
+dev = [
+    "asgiref>=3.8.1",
+    "fastapi>=0.115.6",
+    "interop",
+    "ipython>=8.30.0",
+    "pytest>=8.3.4",
+    "ruff>=0.8.3",
+    "uvicorn>=0.33.0",
+]
 
-[tool.poetry.dev-dependencies]
-autoflake = "^1.4"
-black = "^22.3.0"
-flake8 = "^3.8.4"
-ipython = "^7.19.0"
-isort = "5.8.0"
-pytest = "^6.2.2"
-fastapi = "^0.103.0"
-uvicorn = "^0.23.2"
-asgiref = "^3.7.2"
-
-[tool.poetry.scripts]
+[project.scripts]
 interop = "interop.cli:main"
+
+[project.urls]
+repository = "https://github.com/timzaz/interop.git"
+
+[tool.ruff]
+# Set the maximum line length to 79.
+line-length = 79
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.uv.sources]
+interop = { workspace = true }
