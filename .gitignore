@@ -31,7 +31,6 @@ coverage
 
 # Generated files
 *.[oa]
-*.lock
 *.py[co]
 *.rbc
 *.sock
