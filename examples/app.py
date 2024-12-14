@@ -2,6 +2,7 @@ import asyncio
 import os
 import typing
 from uuid import uuid4
+from contextlib import asynccontextmanager
 
 import dotenv
 import uvicorn
@@ -60,9 +61,23 @@ def make_handler(name: str):
 
 subscribe("fastapi.#", Exchanges.NOTIFY.value)(make_handler("Logger"))
 the_interop = Interop(
-    "examples.fastapi", os.getenv("RMQ_BROKER_URI", ""),
+    "examples.fastapi",
+    os.getenv("RMQ_BROKER_URI", ""),
 )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await the_interop.init_app(app={})
+    yield
+    # Shutdown
+    the_interop.publisher.stop()
+    the_interop.subscriber.stop()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     description="Interop embedded in a web application.",
     docs_url="/_api/docs",
     openapi_url="/_api/openapi.json",
@@ -76,17 +91,6 @@ app.debug = True
 @app.get("/")
 async def index():
     return {"Hello": "World"}
-
-
-@app.on_event("startup")
-async def startup_event():
-    await the_interop.init_app(app={})
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    the_interop.publisher.stop()
-    the_interop.subscriber.stop()
 
 
 if __name__ == "__main__":
