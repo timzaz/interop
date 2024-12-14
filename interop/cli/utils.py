@@ -49,9 +49,9 @@ def get_templates_directory() -> str:
     templates_module: typing.Optional[types.ModuleType] = None
 
     try:
-        templates_module: typing.Optional[
-            types.ModuleType
-        ] = importlib.import_module(templates_module_name)
+        templates_module: typing.Optional[types.ModuleType] = (
+            importlib.import_module(templates_module_name)
+        )
     except ImportError:
         pass
 

@@ -74,7 +74,6 @@ class Packet:
         referrer: str | None = None,
         delivery_mode: int = 2,
     ):
-
         self.content_type = content_type
         self.exchange = exchange
         self.routing_key = routing_key
@@ -101,9 +100,8 @@ class Packet:
         """
 
         if value is None or not any(
-            type(value) == x for x in [dict, list, set, tuple]
+            isinstance(value, x) for x in [dict, list, set, tuple]
         ):
-
             raise RuntimeError("Value must be a dict, list, set or tuple!!")
         #: Ensure type conformity as this will have to be pickled
         setattr(self, "_data", value)
@@ -232,7 +230,6 @@ def rpc(
     expiration: int = 5,
     delivery_mode: int = 2,
 ) -> typing.Tuple[str, Event]:
-
     """Package and queue the packet."""
 
     packet = Packet(
@@ -280,7 +277,6 @@ def reply(_packet: Packet):
         and _packet.reply_exchange
         and _packet.reply_routing_key
     ):
-
         packet = Packet(
             _packet.reply_exchange,
             routing_key=_packet.reply_routing_key,

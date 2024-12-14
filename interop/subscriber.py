@@ -391,7 +391,6 @@ class Subscriber:
         """
 
         while True:
-
             try:
                 subscription: _Subscription = self._executor_queue.get_nowait()
             except QueueEmpty:
@@ -399,7 +398,6 @@ class Subscriber:
                 continue
 
             try:
-
                 await subscription.handler(subscription.packet)
 
             except Exception as exc:

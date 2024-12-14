@@ -1,21 +1,43 @@
-MIT License
+# GNU GENERAL PUBLIC LICENSE
 
-Copyright (c) 2021 A. J. Wray
+Version 3, October 2007
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Copyright (C) 2007 Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor
+Boston, MA  02110-1301  USA
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Preamble
+
+The GNU General Public License (GPL) is a free software license, and any
+software released under this license is free software: everyone is free
+to use, copy, modify, and distribute it, with or without a fee.
+
+The GPL is a copyleft license, which means that derivative works of GPL-licensed
+software must also be released under the GPL. This is to ensure that
+everyone has the same freedoms with the software.
+
+The GPL is designed to protect the freedoms of software users. It ensures
+that everyone who uses a GPL-licensed program can run, study, modify, and
+redistribute the software, and that they can do so without any restrictions.
+
+The GPL is also designed to ensure that software developers can share and
+collaborate on software. It encourages the development of free software by
+making it easy for others to use, modify, and share GPL-licensed software.
+
+The GPL is a powerful tool for protecting the freedoms of software users.
+It is a flexible license that can be used for a wide variety of software.
+
+The GPL is a living license, and it is constantly being updated to
+address new technologies and challenges. The Free Software Foundation
+encourages everyone to use the GPL and to help keep it up-to-date.
+
+Copyright (C) 2017 - 2023 [A. J. Wray](ajw@ajw.sl)
+
+This project is licensed under the GNU General Public License version 3.
+You can find a copy of the license at <https://www.gnu.org/licenses/gpl-3.0.html>.
+
+If you have any questions about the GPL, please contact the [Free
+Software Foundation](licensing@fsf.org).

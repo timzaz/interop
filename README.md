@@ -31,6 +31,7 @@ async def start():
 ```
 
 or scaffold standalone application with cli script:
+
 ```bash
 
 interop init
@@ -40,6 +41,7 @@ interop init
 also, see the `examples` folder
 
 ## Configuration Values
+
 ```bash
 
 #: Import name for your application
@@ -60,6 +62,7 @@ RMQ_BROKER_URI="${RMQ_URI}/%2F?connection_attempts=3&heartbeat=3600"
 ```
 
 ## Sample Publisher
+
 ```python
 
 import asyncio
@@ -83,6 +86,7 @@ async def sample(app: typing.Dict[str, typing.Any]):
 ```
 
 ## Sample Subscriber
+
 ```python
 
 from interop import Packet

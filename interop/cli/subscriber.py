@@ -23,7 +23,6 @@ class SubscriberCli(typer.Typer):
         name: typing.Optional[str] = "subscriber",
         **kwargs: typing.Any,
     ):
-
         super().__init__(name=name, help=help, **kwargs)
         self.callback(invoke_without_command=True)(self.subscriber)
 
@@ -64,9 +63,9 @@ class SubscriberCli(typer.Typer):
         subscriber_dir: str | None = None
         try:
             if module == default_module:
-                import_module: typing.Optional[
-                    types.ModuleType
-                ] = importlib.import_module(import_name)
+                import_module: typing.Optional[types.ModuleType] = (
+                    importlib.import_module(import_name)
+                )
                 subscriber_dir = os.path.join(
                     os.path.dirname(inspect.getfile(import_module)),
                     "subscribers",
@@ -80,9 +79,9 @@ class SubscriberCli(typer.Typer):
                         with open(init_dir, "w") as file:
                             file.write("")
             else:
-                module_module: typing.Optional[
-                    types.ModuleType
-                ] = importlib.import_module(module)
+                module_module: typing.Optional[types.ModuleType] = (
+                    importlib.import_module(module)
+                )
                 subscriber_dir = os.path.dirname(
                     inspect.getfile(module_module)
                 )

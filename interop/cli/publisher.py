@@ -21,7 +21,6 @@ class PublisherCli(typer.Typer):
         name: typing.Optional[str] = "publisher",
         **kwargs: typing.Any,
     ):
-
         super().__init__(name=name, help=help, **kwargs)
         self.callback(invoke_without_command=True)(self.publisher)
 
@@ -47,9 +46,9 @@ class PublisherCli(typer.Typer):
         publisher_dir: str | None = None
         try:
             if module == default_module:
-                import_module: typing.Optional[
-                    types.ModuleType
-                ] = importlib.import_module(import_name)
+                import_module: typing.Optional[types.ModuleType] = (
+                    importlib.import_module(import_name)
+                )
                 publisher_dir = os.path.join(
                     os.path.dirname(inspect.getfile(import_module)),
                     "publishers",
@@ -63,9 +62,9 @@ class PublisherCli(typer.Typer):
                         with open(init_dir, "w") as file:
                             file.write("")
             else:
-                module_module: typing.Optional[
-                    types.ModuleType
-                ] = importlib.import_module(module)
+                module_module: typing.Optional[types.ModuleType] = (
+                    importlib.import_module(module)
+                )
                 publisher_dir = os.path.dirname(inspect.getfile(module_module))
         except:  # noqa
             typer.echo(f"Could not import module: {module}\n\n")

@@ -106,7 +106,7 @@ def before_connect(f):
 
 
 def publish(
-    func: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]
+    func: typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine],
 ) -> typing.Callable[
     [typing.Callable[[typing.Dict[str, typing.Any]], typing.Coroutine]],
     typing.Any,
@@ -377,7 +377,9 @@ class Interop:
 
             async def file_logger(packet):
                 pass
-            app.add_broker_rule('log.critical', 'log', file_logger)
+
+
+            app.add_broker_rule("log.critical", "log", file_logger)
 
         ..note::
           All handler functions must accept a single parameter: The Packet

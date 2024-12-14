@@ -27,7 +27,6 @@ class InitCli(typer.Typer):
         name: typing.Optional[str] = "init",
         **kwargs: typing.Any,
     ):
-
         super().__init__(name=name, help=help, **kwargs)
         self.callback(invoke_without_command=True)(self.init)
 
