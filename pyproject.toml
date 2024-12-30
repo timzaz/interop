@@ -8,11 +8,11 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-    "asyncblink>=0.5.0",
-    "jinja2",
-    "pika",
-    "python-dotenv",
-    "typer",
+    "asyncblink==0.5.0",
+    "jinja2==3.1.4",
+    "pika==1.3.2",
+    "python-dotenv==1.0.1",
+    "typer==0.15.1",
 ]
 description = "Asynchronous publish/subscribe client for RabbitMQ"
 keywords = [
