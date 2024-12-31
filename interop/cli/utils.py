@@ -12,7 +12,7 @@ import typer
 def get_import_name() -> str:
     #: Set the environment variables
     env_dir = None
-    path = dotenv.find_dotenv(".env.local", usecwd=True)
+    path = dotenv.find_dotenv(".env", usecwd=True)
 
     if path and env_dir is None:
         env_dir = os.path.dirname(path)
